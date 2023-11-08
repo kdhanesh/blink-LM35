@@ -32,11 +32,11 @@ void loop(void) {
 
   if (temp > 30) {
     Timer1.detachInterrupt(); // Detach the interrupt to stop the original 150ms blink
-    Timer1.initialize(250000); // Change the Timer1 interval to 250ms
+    Timer1.setPeriod(250000); // Change the Timer1 interval to 250ms
     Timer1.attachInterrupt(blinkLED); // Attach the interrupt with the new interval
   } else {
     Timer1.detachInterrupt(); // Detach the interrupt to stop the 250ms blink
-    Timer1.initialize(500000); // Change the Timer1 interval back to 500ms
+    Timer1.setPeriod(500000); // Change the Timer1 interval back to 500ms
     Timer1.attachInterrupt(blinkLED); // Attach the interrupt with the 500ms interval
   }
 }
