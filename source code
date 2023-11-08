@@ -1,0 +1,42 @@
+#include <TimerOne.h>
+
+void setup(void) {
+  pinMode(A0, INPUT);
+  pinMode(13, OUTPUT);
+  Timer1.initialize(150000); // Initialize Timer1 with a 150ms interval
+  Timer1.attachInterrupt(blinkLED); // Attach the interrupt handler to Timer1
+  Serial.begin(9600);
+}
+
+int ledState = LOW;
+volatile unsigned long blinkCount = 0; // Use 'volatile' for shared variables
+
+void blinkLED(void) {
+  if (ledState == LOW) {
+    ledState = HIGH;
+    // LED is turned on when this function is called
+  } else {
+    ledState = LOW;
+    // LED is turned off when this function is called
+  }
+  digitalWrite(13, ledState); // Set the LED state
+}
+
+void loop(void) {
+  int data = analogRead(A0);
+  
+  float voltage = (data * 5.0) / 1024.0; // Convert analog reading to voltage
+  float milivolt = voltage * 1000.0; // Convert voltage to millivolts
+  
+  float temp = (milivolt - 500) / 10; // Calculate temperature in degrees Celsius
+
+  if (temp > 30) {
+    Timer1.detachInterrupt(); // Detach the interrupt to stop the original 150ms blink
+    Timer1.initialize(250000); // Change the Timer1 interval to 250ms
+    Timer1.attachInterrupt(blinkLED); // Attach the interrupt with the new interval
+  } else {
+    Timer1.detachInterrupt(); // Detach the interrupt to stop the 250ms blink
+    Timer1.initialize(500000); // Change the Timer1 interval back to 500ms
+    Timer1.attachInterrupt(blinkLED); // Attach the interrupt with the 500ms interval
+  }
+}
